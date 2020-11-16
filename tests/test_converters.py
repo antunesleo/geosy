@@ -39,6 +39,5 @@ class TestGeometryTypeConverter(TestCase):
         wkt_polygon = Wkt('POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))')
         converter = GeometryTypeConverter()
         geojson_polygon = converter.from_wkt_to_geojson(wkt_polygon)
-        print(geojson_polygon)
         self.assertIsInstance(geojson_polygon, dict)
         self.assertEqual({'type': 'Polygon', 'coordinates': [[[-50.1715041, -21.7928566], [-50.1744239, -21.7924781], [-50.1773223, -21.7929562], [-50.1784601, -21.7950084], [-50.1723414, -21.7959647], [-50.1715041, -21.7928566]]]}, geojson_polygon)
