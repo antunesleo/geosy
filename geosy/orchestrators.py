@@ -1,3 +1,6 @@
+from geosy.converters import geometry_type_converter
+
+
 class Orchestrator:
     pass
 

@@ -1,7 +1,10 @@
+from typing import Union
+
 from shapely import geometry as shapely_geometry
 
 from geosy.exceptions import UnsupportedGeotypeError
 from geosy import GeoFormats
+
 
 class Wkt:
 
@@ -15,7 +18,7 @@ class Wkt:
 
 class GeoTypeIdentifier:
 
-    def identify_geotype(self, unknown_geotype) -> str:
+    def identify_geotype(self, unknown_geotype) -> GeoFormats:
         if isinstance(
             unknown_geotype,
             (
@@ -28,5 +31,10 @@ class GeoTypeIdentifier:
                 shapely_geometry.LinearRing)):
             return GeoFormats.SHAPELY
 
-        print(unknown_geotype)
+        if isinstance(unknown_geotype, Wkt):
+            return GeoFormats.WKT
+
         raise UnsupportedGeotypeError(f'The type {unknown_geotype} is not supported')
+
+
+identifier = GeoTypeIdentifier()
