@@ -4,7 +4,7 @@ from geojson_rewind import rewind
 
 from geosy import GeoFormats, AnyShapelyGeoType, AnyGeoType, ALL_SHAPELY_TYPES
 from geosy.exceptions import UnsupportedGeoTypeError
-from geosy.geotypes import Wkt
+from geosy.geotypes import Wkt, GeoJsonPolygon
 
 
 class Identifier:
@@ -41,9 +41,9 @@ class GeometryTypeConverter:
     def from_wkt_to_shapely(wkt_geometry: Wkt) -> AnyShapelyGeoType:
         return wkt.loads(wkt_geometry.as_str)
 
-    def from_wkt_to_geojson(self, wkt_geometry: Wkt) -> dict:
+    def from_wkt_to_geojson(self, wkt_geometry: Wkt) -> GeoJsonPolygon:
         geojson = geomet_wkt.loads(wkt_geometry.as_str)
-        return self.__fix_to_right_hand_rule(geojson)
+        return GeoJsonPolygon(self.__fix_to_right_hand_rule(geojson))
 
     @staticmethod
     def __fix_to_right_hand_rule(geojson: dict) -> dict:
