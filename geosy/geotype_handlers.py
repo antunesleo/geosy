@@ -7,7 +7,7 @@ from geosy.exceptions import UnsupportedGeoTypeError
 from geosy.geotypes import Wkt
 
 
-class GeoTypeIdentifier:
+class Identifier:
 
     def identify_geo_type(self, unknown_geo_type: AnyGeoType) -> GeoFormats:
         if isinstance(unknown_geo_type, ALL_SHAPELY_TYPES):
@@ -19,12 +19,12 @@ class GeoTypeIdentifier:
         raise UnsupportedGeoTypeError(f'The type {unknown_geo_type} is not supported')
 
 
-identifier = GeoTypeIdentifier()
+identifier = Identifier()
 
 
 class GeometryTypeConverter:
 
-    def __init__(self, geo_type_identifier: GeoTypeIdentifier):
+    def __init__(self, geo_type_identifier: Identifier):
         self.__identifier = geo_type_identifier
 
     def from_unknown_to_spec_type(self, unknown_geometry: AnyGeoType, spec_type: GeoFormats):
@@ -55,4 +55,10 @@ class GeometryTypeConverter:
         return rewind(geojson)
 
 
-geometry_type_converter = GeometryTypeConverter(GeoTypeIdentifier())
+class Validator:
+
+    def is_geometry_valid(self, geometry: AnyGeoType) -> bool:
+        pass
+
+
+geometry_type_converter = GeometryTypeConverter(Identifier())

@@ -3,7 +3,7 @@ from unittest import TestCase, mock
 from shapely.geometry import Polygon
 
 from geosy import GeoFormats
-from geosy.handlers import GeometryTypeConverter, GeoTypeIdentifier
+from geosy.geotype_handlers import GeometryTypeConverter, Identifier
 from geosy.geotypes import Wkt
 from geosy.exceptions import UnsupportedGeoTypeError
 
@@ -86,18 +86,18 @@ class TestGeoTypeIdentifier(TestCase):
             [-50.1723414, -21.7959647],
             [-50.1715041, -21.7928566]
         ])
-        identifier = GeoTypeIdentifier()
+        identifier = Identifier()
         geotype = identifier.identify_geo_type(shapely_polygon)
         self.assertEqual(GeoFormats.SHAPELY, geotype)
 
     def test_should_identify_wkt_geo_type(self):
         wkt_polygon = Wkt('POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))')
-        identifier = GeoTypeIdentifier()
+        identifier = Identifier()
         geotype = identifier.identify_geo_type(wkt_polygon)
         self.assertEqual(GeoFormats.WKT, geotype)
 
     def test_identify_should_raise_unsupported_geotype(self):
         unsupported_type = mock.MagicMock()
-        identifier = GeoTypeIdentifier()
+        identifier = Identifier()
         with self.assertRaises(UnsupportedGeoTypeError):
             identifier.identify_geo_type(unsupported_type)
