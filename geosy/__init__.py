@@ -3,8 +3,7 @@ from typing import Union
 
 from shapely import geometry as shapely_geometry
 
-from geosy.geotypes import Wkt
-
+from geosy.geotypes import Wkt, WktPolygon
 
 ALL_SHAPELY_TYPES = (
     shapely_geometry.MultiPoint,
@@ -40,6 +39,7 @@ AnyGeoType = Union[
 ]
 
 AnyPolygonType = Union[
+    WktPolygon,
     shapely_geometry.Polygon,
 ]
 
