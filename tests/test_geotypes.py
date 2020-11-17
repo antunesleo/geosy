@@ -6,9 +6,10 @@ from geosy.exceptions import CorruptedGeometryError
 
 class TestWkt(TestCase):
 
-    def test_init_should_raise_invalid_geometry_when_geometry_is_corrupted(self):
+    def test_init_should_raise_corrupted_geometry_when_geometry_is_corrupted(self):
+        corrupted_wkt = 'POINT (40.12, 40.32)'
         with self.assertRaises(CorruptedGeometryError):
-            Wkt('POINT (40.12, 40.32)')
+            Wkt(corrupted_wkt)
 
     def test_should_have_as_str(self):
         wkt = Wkt('POINT (40.12 40.32)')
