@@ -1,3 +1,4 @@
 Shapely==1.7.1
 geojson-rewind==0.2.0
 geomet==0.2.1.post1
+geojson==2.5.0
