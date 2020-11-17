@@ -5,7 +5,7 @@ from shapely.geometry import Polygon
 from geosy import GeoFormats
 from geosy.converters import GeometryTypeConverter
 from geosy.geotypes import Wkt
-
+from geosy.exceptions import UnsupportedGeotypeError
 
 class TestGeometryTypeConverter(TestCase):
 
@@ -43,7 +43,7 @@ class TestGeometryTypeConverter(TestCase):
         self.assertIsInstance(geojson_polygon, dict)
         self.assertEqual({'type': 'Polygon', 'coordinates': [[[-50.1715041, -21.7928566], [-50.1744239, -21.7924781], [-50.1773223, -21.7929562], [-50.1784601, -21.7950084], [-50.1723414, -21.7959647], [-50.1715041, -21.7928566]]]}, geojson_polygon)
 
-    def test_should_convert_from_unkown_to_spec_type(self):
+    def test_should_convert_from_unknown_to_spec_type(self):
         identifier_mock = mock.MagicMock()
         identifier_mock.identify_geotype.return_value = GeoFormats.WKT
         wkt_polygon = Wkt('POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))')
@@ -55,8 +55,20 @@ class TestGeometryTypeConverter(TestCase):
             shapely_polygon.wkt
         )
 
-    def test_convert_from_unkown_to_spec_type_should_raise_exception_when_unkown_type_is_not_valid(self):
-        pass
+    def test_convert_from_unknown_to_spec_type_should_raise_exception_when_unknown_type_is_not_valid(self):
+        identifier_mock = mock.MagicMock()
+        identifier_mock.identify_geotype.side_effect = UnsupportedGeotypeError
+        unknown_type = mock.MagicMock()
 
-    def test_convert_from_unkown_to_spec_type_should_raise_exception_when_spec_type_is_not_valid(self):
-        pass
+        with self.assertRaises(UnsupportedGeotypeError):
+            converter = GeometryTypeConverter(identifier_mock)
+            converter.from_unknown_to_spec_type(unknown_type, spec_type=GeoFormats.SHAPELY)
+
+    def test_convert_from_unknown_to_spec_type_should_raise_exception_when_spec_type_is_not_valid(self):
+        wkt_polygon = Wkt('POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))')
+        identifier_mock = mock.MagicMock()
+        identifier_mock.identify_geotype.side_effect = UnsupportedGeotypeError
+
+        with self.assertRaises(UnsupportedGeotypeError):
+            converter = GeometryTypeConverter(identifier_mock)
+            converter.from_unknown_to_spec_type(wkt_polygon, spec_type='unsupported')

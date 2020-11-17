@@ -18,7 +18,10 @@ class GeometryTypeConverter:
         known_geometry_type = self.__geotype_identifier.identify_geotype(unknown_geometry)
         method_name = f'from_{known_geometry_type.value}_to_{spec_type.value}'
         method_to_call = getattr(self, method_name)
-        return method_to_call(unknown_geometry)
+        try:
+            return method_to_call(unknown_geometry)
+        except Exception as ex:
+            pass
 
     def from_shapely_to_wkt(self, shapely_geometry: BaseGeometry) -> Wkt:
         return Wkt(shapely_geometry.wkt)
