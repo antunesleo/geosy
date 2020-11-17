@@ -1,2 +1,2 @@
-class UnsupportedGeotypeError(Exception):
+class UnsupportedGeoTypeError(Exception):
     pass

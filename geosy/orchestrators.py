@@ -1,4 +1,4 @@
-from geosy.converters import geometry_type_converter
+from geosy.handlers import geometry_type_converter
 
 
 class Orchestrator:
