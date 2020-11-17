@@ -8,8 +8,10 @@ from geosy.geotypes import Wkt
 
 class GeometryTypeConverter:
 
-    def unknown_to(self, unknown_geometry: object, type_to_be_converted: str):
-        pass
+    def from_unknown_to_spec_type(self, unknown_geometry: object, spec_type: str):
+        known_geometry_type = unknown_geometry
+        method_name = f'from_{known_geometry_type}_to_{spec_type}'
+        return callable(method_name)
 
     def from_shapely_to_wkt(self, shapely_geometry: BaseGeometry) -> Wkt:
         return Wkt(shapely_geometry.wkt)
@@ -28,4 +30,3 @@ class GeometryTypeConverter:
         this function is here to correct this problem.
         """
         return rewind(geojson)
-

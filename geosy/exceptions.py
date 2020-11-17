@@ -1,0 +1,2 @@
+class UnsupportedGeotypeError(Exception):
+    pass

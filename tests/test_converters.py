@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from shapely.geometry import Polygon
 
+from geosy import GeoFormats
 from geosy.converters import GeometryTypeConverter
 from geosy.geotypes import Wkt
 
@@ -41,3 +42,19 @@ class TestGeometryTypeConverter(TestCase):
         geojson_polygon = converter.from_wkt_to_geojson(wkt_polygon)
         self.assertIsInstance(geojson_polygon, dict)
         self.assertEqual({'type': 'Polygon', 'coordinates': [[[-50.1715041, -21.7928566], [-50.1744239, -21.7924781], [-50.1773223, -21.7929562], [-50.1784601, -21.7950084], [-50.1723414, -21.7959647], [-50.1715041, -21.7928566]]]}, geojson_polygon)
+
+    def test_should_convert_from_unkown_to_spec_type(self):
+        wkt_polygon = Wkt('POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))')
+        converter = GeometryTypeConverter()
+        shapely_polygon = converter.from_unknown_to_spec_type(wkt_polygon, spec_type=GeoFormats.SHAPELY)
+        self.assertIsInstance(shapely_polygon, Polygon)
+        self.assertEqual(
+            'POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))',
+            shapely_polygon.wkt
+        )
+
+    def test_convert_from_unkown_to_spec_type_should_raise_exception_when_unkown_type_is_not_valid(self):
+        pass
+
+    def test_convert_from_unkown_to_spec_type_should_raise_exception_when_spec_type_is_not_valid(self):
+        pass
