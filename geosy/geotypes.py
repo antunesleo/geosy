@@ -26,3 +26,7 @@ class Wkt:
     @property
     def is_valid(self) -> bool:
         return self.__is_valid
+
+
+class WktPolygon(Wkt):
+    pass
