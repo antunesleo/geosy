@@ -39,6 +39,10 @@ AnyGeoType = Union[
     shapely_geometry.LinearRing
 ]
 
+AnyPolygonType = Union[
+    shapely_geometry.Polygon,
+]
+
 
 class GeoFormats(Enum):
     WKT = 'wkt'
