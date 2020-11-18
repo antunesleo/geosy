@@ -3,7 +3,7 @@ from geomet import wkt as geomet_wkt
 from geojson_rewind import rewind
 
 from geosy import GeoFormats, AnyShapelyGeoType, AnyGeoType, ALL_SHAPELY_TYPES, AnyWktGeoType, AnyGeoJsonGeoType, \
-    GeoShapes
+    GeoShapes, ALL_WKT_TYPES
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError
 from geosy.geotypes import Wkt, GeoJsonPolygon, WktPolygon
 
@@ -14,7 +14,7 @@ class Identifier:
         if isinstance(unknown_geo_type, ALL_SHAPELY_TYPES):
             return GeoFormats.SHAPELY
 
-        if isinstance(unknown_geo_type, Wkt):
+        if isinstance(unknown_geo_type, ALL_WKT_TYPES):
             return GeoFormats.WKT
 
         raise UnsupportedGeoTypeError(f'The type {unknown_geo_type} is not supported')

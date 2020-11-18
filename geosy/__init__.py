@@ -15,6 +15,10 @@ ALL_SHAPELY_TYPES = (
     shapely_geometry.LinearRing
 )
 
+ALL_WKT_TYPES = (
+    WktPolygon
+)
+
 AnyGeoType = Union[
     WktPolygon,
     GeoJsonPolygon,
