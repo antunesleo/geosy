@@ -65,7 +65,7 @@ class Validator:
 class GeoTypesFactory:
 
     def create_wkt(self, wkt: str) -> AnyWktGeoType:
-        shape = wkt.split(' ')[0]
+        shape = wkt.split(' ')[0].lower()
         if shape == GeoShapes.POLYGON.value:
             return WktPolygon(wkt)
 

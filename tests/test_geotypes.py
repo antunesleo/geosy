@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from geosy import Wkt
+from geosy.geotypes import Wkt
 from geosy.exceptions import CorruptedGeometryError
 from geosy.geotypes import GeoJsonPolygon
 from tests.dataset import geojson
