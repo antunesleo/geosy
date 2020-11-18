@@ -49,7 +49,7 @@ class TestGeometryTypeConverter(TestCase):
     def test_should_convert_from_unknown_to_spec_type(self):
         identifier_mock = mock.MagicMock()
         identifier_mock.identify_geo_type.return_value = GeoFormats.WKT
-        wkt_polygon = Wkt('POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))')
+        wkt_polygon = WktPolygon('POLYGON ((-50.1715041 -21.7928566, -50.1744239 -21.7924781, -50.1773223 -21.7929562, -50.1784601 -21.7950084, -50.1723414 -21.7959647, -50.1715041 -21.7928566))')
         converter = GeometryTypeConverter(identifier_mock)
         shapely_polygon = converter.from_unknown_to_spec_type(wkt_polygon, spec_type=GeoFormats.SHAPELY)
         self.assertIsInstance(shapely_polygon, Polygon)
