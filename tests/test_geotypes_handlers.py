@@ -2,11 +2,11 @@ from unittest import TestCase, mock
 
 from shapely.geometry import Polygon
 
-from tests.dataset import wkt as wkt_dataset, shapely as shapely_dataset
+from tests.dataset import wkt as wkt_dataset, shapely as shapely_dataset, geojson as geojson_dataset
 
 from geosy import GeoFormats
 from geosy.geotype_handlers import GeometryTypeConverter, Identifier, GeoTypesFactory
-from geosy.geotypes import Wkt, GeoJson, WktPolygon
+from geosy.geotypes import Wkt, GeoJson, GeoJsonPolygon, WktPolygon
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError
 
 
@@ -110,3 +110,14 @@ class TestGeoTypesFactory(TestCase):
         factory = GeoTypesFactory()
         with self.assertRaises(UnsupportedShapeError):
             factory.create_wkt(wkt_dataset.POINT)
+
+    def test_should_create_geojson_polygon(self):
+        factory = GeoTypesFactory()
+        geojso_polygon = factory.create_geo_json(geojson_dataset.POLYGON)
+        self.assertIsInstance(geojso_polygon, GeoJsonPolygon)
+        self.assertEqual(geojson_dataset.POLYGON, geojso_polygon.as_dict)
+
+    def test_should_raise_UnsupportedShapeError_when_geojson_is_not_supported(self):
+        factory = GeoTypesFactory()
+        with self.assertRaises(UnsupportedShapeError):
+            factory.create_geo_json(geojson_dataset.POINT)

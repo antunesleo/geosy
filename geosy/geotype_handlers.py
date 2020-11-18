@@ -64,16 +64,25 @@ class Validator:
 
 class GeoTypesFactory:
 
-    def create_wkt(self, wkt: str) -> AnyWktGeoType:
+    @staticmethod
+    def create_wkt(wkt: str) -> AnyWktGeoType:
         shape = wkt.split(' ')[0].lower()
-        if shape == GeoShapes.POLYGON.value:
+
+        if shape == GeoShapes.POLYGON.value.lower():
             return WktPolygon(wkt)
 
         error_message = f'could not create an wkt instance because the shape {shape} is not supported'
         raise UnsupportedShapeError(error_message)
 
-    def create_geo_json(self, geo_json: dict) -> AnyGeoJsonGeoType:
-        pass
+    @staticmethod
+    def create_geo_json(geo_json: dict) -> AnyGeoJsonGeoType:
+        shape = geo_json['type'].lower()
+
+        if geo_json['type'].lower() == GeoShapes.POLYGON.value.lower():
+            return GeoJsonPolygon(geo_json)
+
+        error_message = f'could not create an geo json instance because the shape {shape} is not supported'
+        raise UnsupportedShapeError(error_message)
 
 
 geometry_type_converter = GeometryTypeConverter(Identifier())

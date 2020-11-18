@@ -36,3 +36,9 @@ POLYGON_INVALID_WITH_ONE_MORE_COORDINATE = {
         ]
     ]
 }
+
+
+POINT = {
+    "type": "Point",
+    "coordinates": [100, 0]
+}
