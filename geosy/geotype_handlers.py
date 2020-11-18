@@ -1,11 +1,20 @@
-from shapely import wkt
+from shapely import wkt, geometry as shapely_geometry
 from geomet import wkt as geomet_wkt
 from geojson_rewind import rewind
 
-from geosy import GeoFormats, AnyShapelyGeoType, AnyGeoType, ALL_SHAPELY_TYPES, AnyWktGeoType, AnyGeoJsonGeoType, \
-    GeoShapes, ALL_WKT_TYPES
+from geosy import GeoFormats, GeoShapes
+from geosy.custom_typing import AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, AnyGeoJsonGeoType
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError
 from geosy.geotypes import Wkt, GeoJsonPolygon, WktPolygon
+
+
+ALL_SHAPELY_TYPES = (
+    shapely_geometry.Polygon
+)
+
+ALL_WKT_TYPES = (
+    WktPolygon
+)
 
 
 class Identifier:

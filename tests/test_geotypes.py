@@ -28,6 +28,11 @@ class TestWkt(TestCase):
         self.assertFalse(invalid_wkt.is_valid)
 
 
+# TODO: Implement these tests
+class TestPolygonWkt(TestCase):
+    pass
+
+
 class TestPolygonGeoJson(TestCase):
 
     def test_is_valid_should_return_True_when_is_valid(self):

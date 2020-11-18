@@ -1,12 +1,15 @@
+from abc import ABC
+
 import geojson as geojson_lib
 
 from shapely import wkt
 from shapely.errors import WKTReadingError
 
+from geosy import GeoShapes
 from geosy.exceptions import CorruptedGeometryError
 
 
-class Wkt:
+class Wkt(ABC):
 
     def __init__(self, value_wkt: str):
         self.__wkt = value_wkt
@@ -22,6 +25,10 @@ class Wkt:
         return self.__wkt
 
     @property
+    def shape(self) -> str:
+        return self.__wkt.split(' ')[0]
+
+    @property
     def as_str(self) -> str:
         return self.__wkt
 
@@ -31,7 +38,11 @@ class Wkt:
 
 
 class WktPolygon(Wkt):
-    pass
+
+    def __init__(self, value_wkt: str):
+        super(WktPolygon, self).__init__(value_wkt)
+        if self.shape.lower() != GeoShapes.POLYGON.value.lower():
+            raise ValueError(f'A {self.shape} shape was provided for wkt polygon creation instead of a polygon shape')
 
 
 class GeoJson:
