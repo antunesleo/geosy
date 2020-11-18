@@ -3,7 +3,7 @@ from typing import Union
 
 from shapely import geometry as shapely_geometry
 
-from geosy.geotypes import Wkt, WktPolygon
+from geosy.geotypes import Wkt, WktPolygon, GeoJsonPolygon, GeoJson
 
 ALL_SHAPELY_TYPES = (
     shapely_geometry.MultiPoint,
@@ -26,9 +26,14 @@ AnyShapelyGeoType = Union[
 ]
 
 
+AnyGeoJsonGeoType = Union[
+    GeoJsonPolygon
+]
+
+
 AnyGeoType = Union[
     Wkt,
-    dict,
+    GeoJson,
     shapely_geometry.MultiPoint,
     shapely_geometry.Point,
     shapely_geometry.Polygon,
@@ -41,6 +46,11 @@ AnyGeoType = Union[
 AnyPolygonType = Union[
     WktPolygon,
     shapely_geometry.Polygon,
+    GeoJsonPolygon
+]
+
+AnyWktGeoType = Union[
+    WktPolygon
 ]
 
 
@@ -50,10 +60,10 @@ class GeoFormats(Enum):
 
 
 class GeoShapes(Enum):
-    MULTIPOINT = 'multipoint'
-    POINT = 'point'
-    POLYGON = 'polygon'
-    MULTIPOLYGON = 'multipolygon'
-    LINESTRING = 'linestring',
-    MULTILINESTRING = 'multilinestring',
-    LINEARRING = 'linearring'
+    MULTIPOINT = 'MULTIPOINT'
+    POINT = 'POINT'
+    POLYGON = 'POLYGON'
+    MULTIPOLYGON = 'MULTIPOLYGON'
+    LINESTRING = 'LINESTRING',
+    MULTILINESTRING = 'MULTILINESTRING',
+    LINEARRING = 'LINEARRING'

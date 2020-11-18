@@ -2,5 +2,9 @@ class UnsupportedGeoTypeError(Exception):
     pass
 
 
+class UnsupportedShapeError(Exception):
+    pass
+
+
 class CorruptedGeometryError(Exception):
     pass

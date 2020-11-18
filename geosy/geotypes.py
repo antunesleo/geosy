@@ -30,6 +30,10 @@ class Wkt:
         return self.__is_valid
 
 
+class WktPolygon(Wkt):
+    pass
+
+
 class GeoJson:
 
     def __init__(self, geojson: dict):
@@ -58,7 +62,3 @@ class GeoJsonPolygon(GeoJson):
     @property
     def is_valid(self) -> bool:
         return self.__is_valid
-
-
-class WktPolygon(Wkt):
-    pass

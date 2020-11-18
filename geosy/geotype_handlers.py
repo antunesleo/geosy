@@ -2,9 +2,10 @@ from shapely import wkt
 from geomet import wkt as geomet_wkt
 from geojson_rewind import rewind
 
-from geosy import GeoFormats, AnyShapelyGeoType, AnyGeoType, ALL_SHAPELY_TYPES
-from geosy.exceptions import UnsupportedGeoTypeError
-from geosy.geotypes import Wkt, GeoJsonPolygon
+from geosy import GeoFormats, AnyShapelyGeoType, AnyGeoType, ALL_SHAPELY_TYPES, AnyWktGeoType, AnyGeoJsonGeoType, \
+    GeoShapes
+from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError
+from geosy.geotypes import Wkt, GeoJsonPolygon, WktPolygon
 
 
 class Identifier:
@@ -58,6 +59,20 @@ class GeometryTypeConverter:
 class Validator:
 
     def is_geometry_valid(self, geometry: AnyGeoType) -> bool:
+        pass
+
+
+class GeoTypesFactory:
+
+    def create_wkt(self, wkt: str) -> AnyWktGeoType:
+        shape = wkt.split(' ')[0]
+        if shape == GeoShapes.POLYGON.value:
+            return WktPolygon(wkt)
+
+        error_message = f'could not create an wkt instance because the shape {shape} is not supported'
+        raise UnsupportedShapeError(error_message)
+
+    def create_geo_json(self, geo_json: dict) -> AnyGeoJsonGeoType:
         pass
 
 
