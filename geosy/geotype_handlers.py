@@ -73,7 +73,7 @@ class GeometryTypeConverter:
 
     def from_wkt_to_geojson(self, wkt_geometry: Wkt) -> AnyGeoJsonGeoType:
         geojson = geomet_wkt.loads(wkt_geometry.as_str)
-        return GeoJsonPolygon(self.__fix_to_right_hand_rule(geojson))
+        return self.__factory.create_geo_json(self.__fix_to_right_hand_rule(geojson))
 
     @staticmethod
     def __fix_to_right_hand_rule(geojson: dict) -> dict:

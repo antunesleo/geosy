@@ -37,7 +37,7 @@ class TestGeometryTypeConverter(TestCase):
 
     def test_should_convert_polygon_geometry_from_wkt_to_geojson_polygon(self):
         factory_mock = mock.MagicMock()
-        factory_mock.create_geo_json.return_value = GeoJsonPolygon(geojson_dataset.POLYGON)
+        factory_mock.create_geo_json.return_value = GeoJsonPolygon({'type': 'Polygon', 'coordinates': [[[-50.1715041, -21.7928566], [-50.1744239, -21.7924781], [-50.1773223, -21.7929562], [-50.1784601, -21.7950084], [-50.1723414, -21.7959647], [-50.1715041, -21.7928566]]]},)
 
         wkt_polygon = Wkt(wkt_dataset.POLYGON)
         converter = GeometryTypeConverter(mock.MagicMock(), factory_mock)
