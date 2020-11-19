@@ -1,40 +1,38 @@
 POLYGON = {
-    "type": "Polygon",
-    "coordinates": [
-        [
-            [100, 0],
-            [101, 1],
-            [100, 1],
-            [100, 0]
-        ]
-    ]
+    'type': 'Polygon',
+    'coordinates': [[
+        [-50.1715041, -21.7928566],
+        [-50.1744239, -21.7924781],
+        [-50.1773223, -21.7929562],
+        [-50.1784601, -21.7950084],
+        [-50.1723414, -21.7959647],
+        [-50.1715041, -21.7928566]
+    ]]
 }
 
-POLYGON_CORRUPTED_WITH_STRING_INSTEAD_OF_NUMBER_IN_COORDINATES = {
-    "type": "Polygon",
-    "coordinates": [
-        [
-            [100, 'this string should not be here'],
-            [101, 0],
-            [101, 1],
-            [100, 1],
-            [100, 0]
-        ]
-    ]
+POLYGON_CORRUPTED_WITH_STRING_INSTEAD_OF_NUMBER_IN_COORDINATES ={
+    'type': 'Polygon',
+    'coordinates': [[
+        [-50.1715041, 'This is string should not be here'],
+        [-50.1744239, -21.7924781],
+        [-50.1773223, -21.7929562],
+        [-50.1784601, -21.7950084],
+        [-50.1723414, -21.7959647],
+        [-50.1715041, -21.7928566]
+    ]]
 }
 
 
 POLYGON_INVALID_WITH_ONE_MORE_COORDINATE = {
-    "type": "Polygon",
-    "coordinates": [
-        [
-            [100, 0, 2],
-            [101, 0],
-            [101, 1],
-            [100, 1],
-            [100, 0]
-        ]
-    ]
+    'type': 'Polygon',
+    'coordinates': [[
+        [-50.1715041, -21.7928566, 2],
+        [-50.1744239, -21.7924781],
+        [-50.1773223, -21.7929562],
+        [-50.1784601, -21.7950084],
+        [-50.1723414, -21.7959647],
+        [-50.1715041, -21.7928566]
+    ]]
 }
 
 
