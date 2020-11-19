@@ -51,6 +51,10 @@ class GeoJson:
         self._geojson = geojson
 
     @property
+    def shape(self) -> str:
+        return self._geojson['type']
+
+    @property
     def as_dict(self) -> dict:
         return self._geojson
 
@@ -65,6 +69,9 @@ class GeoJsonPolygon(GeoJson):
             self.__is_valid = geojson_lib_polygon.is_valid
         except ValueError:
             raise CorruptedGeometryError(f'The geojson polygon {self._geojson} is corrupted')
+
+        if self.shape.lower() != GeoShapes.POLYGON.value.lower():
+            raise ValueError(f'A {self.shape} shape was provided for geo json polygon creation instead of a polygon shape')
 
     @property
     def as_dict(self) -> dict:

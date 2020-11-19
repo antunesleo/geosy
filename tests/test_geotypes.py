@@ -47,6 +47,10 @@ class TestPolygonGeoJson(TestCase):
         with self.assertRaises(CorruptedGeometryError):
             GeoJsonPolygon(geojson_dataset.POLYGON_CORRUPTED_WITH_STRING_INSTEAD_OF_NUMBER_IN_COORDINATES)
 
+    def test_init_should_raise_value_error_when_shape_is_not_a_polygon(self):
+        with self.assertRaises(ValueError):
+            GeoJsonPolygon(geojson_dataset.POINT)
+
     def test_should_have_as_dict(self):
         polygon_geojson = GeoJsonPolygon(geojson_dataset.POLYGON)
         self.assertEqual(geojson_dataset.POLYGON, polygon_geojson.as_dict)
