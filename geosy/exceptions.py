@@ -1,3 +1,7 @@
+class UnsupportedError(Exception):
+    pass
+
+
 class UnsupportedGeoTypeError(Exception):
     pass
 

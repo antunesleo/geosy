@@ -4,7 +4,7 @@ from geojson_rewind import rewind
 
 from geosy import GeoFormats, GeoShapes
 from geosy.custom_typing import AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, AnyGeoJsonGeoType
-from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError
+from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
 from geosy.geotypes import Wkt, GeoJsonPolygon, WktPolygon
 
 
@@ -87,8 +87,14 @@ class GeometryTypeConverter:
 
 class Validator:
 
-    def is_geometry_valid(self, geometry: AnyGeoType) -> bool:
-        pass
+    @staticmethod
+    def is_geometry_valid(geometry: AnyGeoType) -> bool:
+        if isinstance(geometry, AnyWktGeoType):
+            return geometry.is_valid
+        if isinstance(geometry, AnyGeoJsonGeoType):
+            return geometry.is_valid
+
+        raise UnsupportedError(f'cant validate because type {type(geometry)} is not supported')
 
 
 geometry_type_converter = GeometryTypeConverter(Identifier(), GeoTypesFactory())
