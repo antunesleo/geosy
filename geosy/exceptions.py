@@ -12,3 +12,7 @@ class UnsupportedShapeError(Exception):
 
 class CorruptedGeometryError(Exception):
     pass
+
+
+class SeparatedPolygonsError(Exception):
+    pass
