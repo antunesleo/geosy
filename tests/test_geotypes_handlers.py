@@ -2,7 +2,7 @@ from unittest import TestCase, mock
 
 from shapely.geometry import Polygon
 
-from tests.datasets import wkt_dataset as wkt_dataset, shapely_dataset as shapely_dataset, geojson_dataset as geojson_dataset
+from tests.datasets import wkt_str_dataset as wkt_dataset, shapely_dataset as shapely_dataset, geojson_dict_dataset as geojson_dataset
 
 from geosy import GeoFormats
 from geosy.geotype_handlers import GeometryTypeConverter, Identifier, GeoTypesFactory, Validator

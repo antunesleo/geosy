@@ -4,7 +4,7 @@ from geosy.geotypes import Wkt, WktPolygon
 from geosy.exceptions import CorruptedGeometryError
 from geosy.geotypes import GeoJsonPolygon
 
-from tests.datasets import geojson_dataset as geojson_dataset, wkt_dataset as wkt_dataset
+from tests.datasets import geojson_dict_dataset as geojson_dataset, wkt_str_dataset as wkt_dataset
 
 
 class TestWkt(TestCase):
