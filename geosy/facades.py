@@ -2,7 +2,7 @@ from typing import Tuple
 
 from shapely import ops, geometry as shapely_geometry
 
-from geosy import GeoFormats
+from geosy.enums import GeoFormats
 from geosy.custom_typing import AnyPolygonType
 from geosy.exceptions import SeparatedPolygonsError
 from geosy.geotype_handlers import Validator, GeometryTypeConverter, Identifier

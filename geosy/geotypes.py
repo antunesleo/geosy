@@ -5,7 +5,7 @@ import geojson as geojson_lib
 from shapely import wkt
 from shapely.errors import WKTReadingError
 
-from geosy import GeoShapes
+from geosy.enums import GeoShapes
 from geosy.exceptions import CorruptedGeometryError
 
 

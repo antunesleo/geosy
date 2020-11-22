@@ -4,7 +4,7 @@ from shapely.geometry import Polygon
 
 from tests.datasets import wkt_str_dataset as wkt_dataset, shapely_dataset as shapely_dataset, geojson_dict_dataset as geojson_dataset
 
-from geosy import GeoFormats
+from geosy.enums import GeoFormats
 from geosy.geotype_handlers import GeometryTypeConverter, Identifier, GeoTypesFactory, Validator
 from geosy.geotypes import Wkt, GeoJson, GeoJsonPolygon, WktPolygon
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError

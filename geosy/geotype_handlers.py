@@ -2,7 +2,7 @@ from shapely import wkt, geometry as shapely_geometry
 from geomet import wkt as geomet_wkt
 from geojson_rewind import rewind
 
-from geosy import GeoFormats, GeoShapes
+from geosy.enums import GeoFormats, GeoShapes
 from geosy.custom_typing import AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, AnyGeoJsonGeoType
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
 from geosy.geotypes import Wkt, GeoJsonPolygon, WktPolygon

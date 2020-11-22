@@ -1,17 +1,8 @@
-from enum import Enum
+from geosy.custom_typing import AnyPolygonType
 
 
-class GeoFormats(Enum):
-    WKT = 'wkt'
-    SHAPELY = 'shapely'
-    GEOJSON = 'geojson'
+__all__ = ['merge_polygons']
 
 
-class GeoShapes(Enum):
-    MULTIPOINT = 'multipoint'
-    POINT = 'point'
-    POLYGON = 'polygon'
-    MULTIPOLYGON = 'multipolygon'
-    LINESTRING = 'linestring',
-    MULTILINESTRING = 'multilinestring',
-    LINEARRING = 'linearring'
+def merge_polygons(polygons: tuple) -> AnyPolygonType:
+    pass
