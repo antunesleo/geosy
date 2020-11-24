@@ -3,8 +3,8 @@ from unittest import TestCase
 from tests.datasets import wkt_str_dataset
 
 from geosy.facades import PolygonFacade
-from geosy.geotype_handlers import GeometryTypeConverter
-from geosy.geotypes import WktPolygon
+from geosy.tools import GeometryTypeConverter
+from geosy.geometries import WktPolygon
 
 
 class TestPolygonFacade(TestCase):

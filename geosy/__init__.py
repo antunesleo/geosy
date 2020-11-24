@@ -1,4 +1,4 @@
-from geosy.custom_typing import AnyPolygonType
+from geosy.geometries import AnyPolygonType
 
 
 __all__ = ['merge_polygons']

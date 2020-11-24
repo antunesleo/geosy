@@ -6,10 +6,10 @@ from tests.datasets import wkt_str_dataset as wkt_dataset
 from tests.datasets import shapely_dataset as shapely_dataset
 from tests.datasets import geojson_dict_dataset as geojson_dataset
 
-from geosy.enums import GeoFormats
-from geosy.geotype_handlers import GeometryTypeConverter, is_geometry_valid
-from geosy.geotype_handlers import identify_geo_type, create_geo_json, create_wkt
-from geosy.geotypes import Wkt, GeoJson, GeoJsonPolygon, WktPolygon
+from geosy.geometries import GeoFormats
+from geosy.tools import GeometryTypeConverter, is_geometry_valid
+from geosy.tools import identify_geo_type, create_geo_json, create_wkt
+from geosy.geometries import Wkt, GeoJson, GeoJsonPolygon, WktPolygon
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
 
 
@@ -71,6 +71,23 @@ class TestGeometryTypeConverter(TestCase):
             converter.from_unknown_to_spec_type(unknown_type, spec_type=GeoFormats.SHAPELY)
 
 
+class TestIsGeometryValid(TestCase):
+
+    def test_is_geometry_valid_should_return_if_polygon_wkt_geometry_is_valid(self):
+        wkt_polygon = WktPolygon(wkt_dataset.POLYGON)
+        self.assertTrue(is_geometry_valid(wkt_polygon))
+
+    def test_is_geometry_valid_should_return_if_geojson_polygon_geometry_is_valid(self):
+        geojson_polygon = GeoJsonPolygon(geojson_dataset.POLYGON)
+        self.assertTrue(is_geometry_valid(geojson_polygon))
+
+    def test_is_geometry_valid_should_raise_UnsupportedTypeError_when_the_geo_type_is_not_supported(self):
+        not_supported_type = mock.MagicMock()
+        with self.assertRaises(UnsupportedError):
+            is_geometry_valid(not_supported_type)
+
+
+
 class TestCreateWkt(TestCase):
 
     def test_should_create_wkt_polygon(self):
@@ -93,19 +110,3 @@ class TestCreateGeoJsonFactory(TestCase):
     def test_should_raise_UnsupportedShapeError_when_geojson_is_not_supported(self):
         with self.assertRaises(UnsupportedShapeError):
             create_geo_json(geojson_dataset.POINT)
-
-
-class TestIsGeometryValid(TestCase):
-
-    def test_is_geometry_valid_should_return_if_polygon_wkt_geometry_is_valid(self):
-        wkt_polygon = WktPolygon(wkt_dataset.POLYGON)
-        self.assertTrue(is_geometry_valid(wkt_polygon))
-
-    def test_is_geometry_valid_should_return_if_geojson_polygon_geometry_is_valid(self):
-        geojson_polygon = GeoJsonPolygon(geojson_dataset.POLYGON)
-        self.assertTrue(is_geometry_valid(geojson_polygon))
-
-    def test_is_geometry_valid_should_raise_UnsupportedTypeError_when_the_geo_type_is_not_supported(self):
-        not_supported_type = mock.MagicMock()
-        with self.assertRaises(UnsupportedError):
-            is_geometry_valid(not_supported_type)

@@ -1,12 +1,46 @@
 from abc import ABC
+from typing import Union
+from enum import Enum
 
 import geojson as geojson_lib
 
+from shapely import geometry as shapely_geometry
 from shapely import wkt
 from shapely.errors import WKTReadingError
 
-from geosy.enums import GeoShapes
-from geosy.exceptions import CorruptedGeometryError
+from geosy.exceptions import CorruptedGeometryError, UnsupportedShapeError
+
+__all__ = [
+    'GeoFormats',
+    'GeoShapes',
+    'GeoJson',
+    'Wkt',
+    'create_wkt',
+    'create_geo_json',
+    'AnyGeoType',
+    'AnyWktGeoType',
+    'AnyPolygonType',
+    'AnyShapelyGeoType',
+    'AnyGeoJsonGeoType',
+    'ALL_WKT_TYPES',
+    'ALL_SHAPELY_TYPES'
+]
+
+
+class GeoFormats(Enum):
+    WKT = 'wkt'
+    SHAPELY = 'shapely'
+    GEOJSON = 'geojson'
+
+
+class GeoShapes(Enum):
+    MULTIPOINT = 'multipoint'
+    POINT = 'point'
+    POLYGON = 'polygon'
+    MULTIPOLYGON = 'multipolygon'
+    LINESTRING = 'linestring',
+    MULTILINESTRING = 'multilinestring',
+    LINEARRING = 'linearring'
 
 
 class Wkt(ABC):
@@ -80,3 +114,56 @@ class GeoJsonPolygon(GeoJson):
     @property
     def is_valid(self) -> bool:
         return self.__is_valid
+
+
+AnyGeoType = Union[
+    WktPolygon,
+    GeoJsonPolygon,
+    shapely_geometry.Polygon
+]
+
+AnyShapelyGeoType = Union[
+    shapely_geometry.Polygon
+]
+
+AnyGeoJsonGeoType = Union[
+    GeoJsonPolygon
+]
+
+AnyPolygonType = Union[
+    WktPolygon,
+    shapely_geometry.Polygon,
+    GeoJsonPolygon
+]
+
+AnyWktGeoType = Union[
+    WktPolygon
+]
+
+ALL_SHAPELY_TYPES = (
+    shapely_geometry.Polygon
+)
+
+ALL_WKT_TYPES = (
+    WktPolygon
+)
+
+
+def create_geo_json(geo_json: dict) -> AnyGeoJsonGeoType:
+    shape = geo_json['type'].lower()
+
+    if geo_json['type'].lower() == GeoShapes.POLYGON.value.lower():
+        return GeoJsonPolygon(geo_json)
+
+    error_message = f'could not create an geo json instance because the shape {shape} is not supported'
+    raise UnsupportedShapeError(error_message)
+
+
+def create_wkt(wkt: str) -> AnyWktGeoType:
+    shape = wkt.split(' ')[0].lower()
+
+    if shape == GeoShapes.POLYGON.value.lower():
+        return WktPolygon(wkt)
+
+    error_message = f'could not create an wkt instance because the shape {shape} is not supported'
+    raise UnsupportedShapeError(error_message)

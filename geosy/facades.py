@@ -2,10 +2,13 @@ from typing import Tuple
 
 from shapely import ops, geometry as shapely_geometry
 
-from geosy.enums import GeoFormats
-from geosy.custom_typing import AnyPolygonType
+from geosy.geometries import GeoFormats
 from geosy.exceptions import SeparatedPolygonsError
-from geosy.geotype_handlers import GeometryTypeConverter, identify_geo_type
+from geosy.tools import GeometryTypeConverter, identify_geo_type, geometry_type_converter
+
+__all__ = [
+    'polygon_facade'
+]
 
 
 class Facade:
@@ -35,3 +38,6 @@ class PolygonFacade(Facade):
             raise SeparatedPolygonsError('Could not merge polygons because they are not touching')
 
         return self.__converter.from_unknown_to_spec_type(shapely_merged_polygon, spec_type=input_type)
+
+
+polygon_facade = PolygonFacade(geometry_type_converter)

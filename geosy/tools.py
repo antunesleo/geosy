@@ -2,28 +2,18 @@ from shapely import wkt, geometry as shapely_geometry
 from geomet import wkt as geomet_wkt
 from geojson_rewind import rewind
 
-from geosy.enums import GeoFormats, GeoShapes
-from geosy.custom_typing import AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, AnyGeoJsonGeoType
-from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
-from geosy.geotypes import Wkt, GeoJsonPolygon, WktPolygon
+from geosy.geometries import GeoFormats
+from geosy.geometries import Wkt, AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, AnyGeoJsonGeoType
+from geosy.geometries import create_wkt, create_geo_json
+from geosy.geometries import ALL_SHAPELY_TYPES, ALL_WKT_TYPES
+from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedError
 
 __all__ = [
-    'ALL_SHAPELY_TYPES',
-    'ALL_WKT_TYPES',
     'identify_geo_type',
     'is_geometry_valid',
-    'create_geo_json',
-    'create_wkt',
+    'GeometryTypeConverter',
     'geometry_type_converter'
 ]
-
-ALL_SHAPELY_TYPES = (
-    shapely_geometry.Polygon
-)
-
-ALL_WKT_TYPES = (
-    WktPolygon
-)
 
 
 def identify_geo_type(unknown_geo_type: AnyGeoType) -> GeoFormats:
@@ -44,26 +34,6 @@ def is_geometry_valid(geometry: AnyGeoType) -> bool:
         return geometry.is_valid
 
     raise UnsupportedError(f'cant validate because type {type(geometry)} is not supported')
-
-
-def create_geo_json(geo_json: dict) -> AnyGeoJsonGeoType:
-    shape = geo_json['type'].lower()
-
-    if geo_json['type'].lower() == GeoShapes.POLYGON.value.lower():
-        return GeoJsonPolygon(geo_json)
-
-    error_message = f'could not create an geo json instance because the shape {shape} is not supported'
-    raise UnsupportedShapeError(error_message)
-
-
-def create_wkt(wkt: str) -> AnyWktGeoType:
-    shape = wkt.split(' ')[0].lower()
-
-    if shape == GeoShapes.POLYGON.value.lower():
-        return WktPolygon(wkt)
-
-    error_message = f'could not create an wkt instance because the shape {shape} is not supported'
-    raise UnsupportedShapeError(error_message)
 
 
 class GeometryTypeConverter:
