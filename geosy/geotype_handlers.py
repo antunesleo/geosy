@@ -17,16 +17,24 @@ ALL_WKT_TYPES = (
 )
 
 
-class Identifier:
+def identify_geo_type(unknown_geo_type: AnyGeoType) -> GeoFormats:
+    if isinstance(unknown_geo_type, ALL_SHAPELY_TYPES):
+        return GeoFormats.SHAPELY
 
-    def identify_geo_type(self, unknown_geo_type: AnyGeoType) -> GeoFormats:
-        if isinstance(unknown_geo_type, ALL_SHAPELY_TYPES):
-            return GeoFormats.SHAPELY
+    if isinstance(unknown_geo_type, ALL_WKT_TYPES):
+        return GeoFormats.WKT
 
-        if isinstance(unknown_geo_type, ALL_WKT_TYPES):
-            return GeoFormats.WKT
+    raise UnsupportedGeoTypeError(f'The type {unknown_geo_type} is not supported')
 
-        raise UnsupportedGeoTypeError(f'The type {unknown_geo_type} is not supported')
+
+def is_geometry_valid(geometry: AnyGeoType) -> bool:
+    if isinstance(geometry, AnyWktGeoType):
+        return geometry.is_valid
+
+    if isinstance(geometry, AnyGeoJsonGeoType):
+        return geometry.is_valid
+
+    raise UnsupportedError(f'cant validate because type {type(geometry)} is not supported')
 
 
 class GeoTypesFactory:
@@ -54,12 +62,11 @@ class GeoTypesFactory:
 
 class GeometryTypeConverter:
 
-    def __init__(self, geo_type_identifier: Identifier, geo_types_factory: GeoTypesFactory):
-        self.__identifier = geo_type_identifier
+    def __init__(self, geo_types_factory: GeoTypesFactory):
         self.__factory = geo_types_factory
 
     def from_unknown_to_spec_type(self, unknown_geometry: AnyGeoType, spec_type: GeoFormats):
-        known_geometry_type = self.__identifier.identify_geo_type(unknown_geometry)
+        known_geometry_type = identify_geo_type(unknown_geometry)
         method_name = f'from_{known_geometry_type.value}_to_{spec_type.value}'
         method_to_call = getattr(self, method_name)
         return method_to_call(unknown_geometry)
@@ -97,4 +104,4 @@ class Validator:
         raise UnsupportedError(f'cant validate because type {type(geometry)} is not supported')
 
 
-geometry_type_converter = GeometryTypeConverter(Identifier(), GeoTypesFactory())
+geometry_type_converter = GeometryTypeConverter(GeoTypesFactory())
