@@ -2,7 +2,7 @@ from typing import Tuple
 
 from shapely import ops, geometry as shapely_geometry
 
-from geosy.geometries import GeoFormats, create_geometry, return_geometry
+from geosy.geometries import GeoFormats, create_geometry, return_geometry, AnyReturnablePolygon
 from geosy.exceptions import SeparatedPolygonsError
 from geosy.tools import GeometryTypeConverter, identify_geo_type, geometry_type_converter
 
@@ -20,7 +20,7 @@ class PolygonFacade(Facade):
     def __init__(self, converter: GeometryTypeConverter):
         self.__converter = converter
 
-    def merge_polygons(self, polygons: Tuple):
+    def merge_polygons(self, polygons: Tuple) -> AnyReturnablePolygon:
         if len(polygons) < 2:
             raise ValueError(f'You must provide at least two polygons to be merge, {len(polygons)} provided.')
 

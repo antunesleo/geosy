@@ -19,7 +19,6 @@ __all__ = [
     'create_geo_json',
     'AnyGeoType',
     'AnyWktGeoType',
-    'AnyPolygonType',
     'AnyShapelyGeoType',
     'AnyGeoJsonGeoType',
     'ALL_WKT_TYPES',
@@ -146,10 +145,10 @@ AnyGeoJsonGeoType = Union[
     GeoJsonPolygon
 ]
 
-AnyPolygonType = Union[
-    WktPolygon,
-    shapely_geometry.Polygon,
-    GeoJsonPolygon
+AnyReturnablePolygon = Union[
+    str,
+    dict,
+    shapely_geometry.Polygon
 ]
 
 AnyWktGeoType = Union[
@@ -170,8 +169,8 @@ ALL_WKT_TYPES = (
     WktPolygon,
 )
 
-ALL_INTERNAL_TYPES = ALL_WKT_TYPES + ALL_GEOJSON_TYPES
-ALL_EXTERNAL_TYPES = ALL_SHAPELY_TYPES + ALL_GDAL_TYPES
+ALL_INTERNAL_GEO_TYPES = ALL_WKT_TYPES + ALL_GEOJSON_TYPES
+ALL_EXTERNAL_GEO_TYPES = ALL_SHAPELY_TYPES + ALL_GDAL_TYPES
 
 
 def create_geo_json(geo_json: dict) -> AnyGeoJsonGeoType:
@@ -204,7 +203,7 @@ def create_geometry(geometry: object):
 
 
 def return_geometry(geometry):
-    if isinstance(geometry, ALL_INTERNAL_TYPES):
+    if isinstance(geometry, ALL_INTERNAL_GEO_TYPES):
         return geometry.primitive_repr
 
     return geometry
