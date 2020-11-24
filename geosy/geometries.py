@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Union
 from enum import Enum
 
@@ -43,7 +43,15 @@ class GeoShapes(Enum):
     LINEARRING = 'linearring'
 
 
-class Wkt(ABC):
+class Geometry(ABC):
+
+    @property
+    @abstractmethod
+    def primitive_repr(self):
+        pass
+
+
+class Wkt(Geometry):
 
     def __init__(self, value_wkt: str):
         self.__wkt = value_wkt
@@ -67,6 +75,10 @@ class Wkt(ABC):
         return self.__wkt
 
     @property
+    def primitive_repr(self):
+        return self.__wkt
+
+    @property
     def is_valid(self) -> bool:
         return self.__is_valid
 
@@ -79,7 +91,7 @@ class WktPolygon(Wkt):
             raise ValueError(f'A {self.shape} shape was provided for wkt polygon creation instead of a polygon shape')
 
 
-class GeoJson:
+class GeoJson(Geometry):
 
     def __init__(self, geojson: dict):
         self._geojson = geojson
@@ -90,6 +102,10 @@ class GeoJson:
 
     @property
     def as_dict(self) -> dict:
+        return self._geojson
+
+    @property
+    def primitive_repr(self):
         return self._geojson
 
 
@@ -141,12 +157,21 @@ AnyWktGeoType = Union[
 ]
 
 ALL_SHAPELY_TYPES = (
-    shapely_geometry.Polygon
+    shapely_geometry.Polygon,
+)
+
+ALL_GDAL_TYPES = tuple()
+
+ALL_GEOJSON_TYPES = (
+    GeoJsonPolygon,
 )
 
 ALL_WKT_TYPES = (
-    WktPolygon
+    WktPolygon,
 )
+
+ALL_INTERNAL_TYPES = ALL_WKT_TYPES + ALL_GEOJSON_TYPES
+ALL_EXTERNAL_TYPES = ALL_SHAPELY_TYPES + ALL_GDAL_TYPES
 
 
 def create_geo_json(geo_json: dict) -> AnyGeoJsonGeoType:
@@ -167,3 +192,19 @@ def create_wkt(wkt: str) -> AnyWktGeoType:
 
     error_message = f'could not create an wkt instance because the shape {shape} is not supported'
     raise UnsupportedShapeError(error_message)
+
+
+def create_geometry(geometry: object):
+    if isinstance(geometry, str):
+        return create_wkt(geometry)
+    if isinstance(geometry, dict):
+        return create_geo_json(geometry)
+
+    return geometry
+
+
+def return_geometry(geometry):
+    if isinstance(geometry, ALL_INTERNAL_TYPES):
+        return geometry.primitive_repr
+
+    return geometry

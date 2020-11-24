@@ -17,9 +17,8 @@ class TestPolygonFacade(TestCase):
 
     def test_should_merge_two_wkt_polygons(self):
         facade = PolygonFacade(GeometryTypeConverter())
-        polygons = (WktPolygon(wkt_str_dataset.MERGEABLE_POLYGON_1), WktPolygon(wkt_str_dataset.MERGEABLE_POLYGON_2))
+        polygons = (wkt_str_dataset.MERGEABLE_POLYGON_1, wkt_str_dataset.MERGEABLE_POLYGON_2)
 
-        merged_wkt_polygon = facade.merge_polygons(polygons)
+        merged_wkt_str_polygon = facade.merge_polygons(polygons)
 
-        self.assertIsInstance(merged_wkt_polygon, WktPolygon)
-        self.assertEqual(merged_wkt_polygon.as_str, wkt_str_dataset.MERGED_POLYGON)
+        self.assertEqual(merged_wkt_str_polygon, wkt_str_dataset.MERGED_POLYGON)

@@ -2,7 +2,7 @@ from typing import Tuple
 
 from shapely import ops, geometry as shapely_geometry
 
-from geosy.geometries import GeoFormats
+from geosy.geometries import GeoFormats, create_geometry, return_geometry
 from geosy.exceptions import SeparatedPolygonsError
 from geosy.tools import GeometryTypeConverter, identify_geo_type, geometry_type_converter
 
@@ -24,6 +24,8 @@ class PolygonFacade(Facade):
         if len(polygons) < 2:
             raise ValueError(f'You must provide at least two polygons to be merge, {len(polygons)} provided.')
 
+        polygons = tuple(create_geometry(polygon) for polygon in polygons)
+
         input_type = identify_geo_type(polygons[0])
 
         shapely_polygons = [
@@ -37,7 +39,8 @@ class PolygonFacade(Facade):
         if not isinstance(shapely_merged_polygon, shapely_geometry.Polygon):
             raise SeparatedPolygonsError('Could not merge polygons because they are not touching')
 
-        return self.__converter.from_unknown_to_spec_type(shapely_merged_polygon, spec_type=input_type)
+        merged_polygon = self.__converter.from_unknown_to_spec_type(shapely_merged_polygon, spec_type=input_type)
+        return return_geometry(merged_polygon)
 
 
 polygon_facade = PolygonFacade(geometry_type_converter)
