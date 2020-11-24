@@ -2,10 +2,13 @@ from unittest import TestCase, mock
 
 from shapely.geometry import Polygon
 
-from tests.datasets import wkt_str_dataset as wkt_dataset, shapely_dataset as shapely_dataset, geojson_dict_dataset as geojson_dataset
+from tests.datasets import wkt_str_dataset as wkt_dataset
+from tests.datasets import shapely_dataset as shapely_dataset
+from tests.datasets import geojson_dict_dataset as geojson_dataset
 
 from geosy.enums import GeoFormats
-from geosy.geotype_handlers import GeometryTypeConverter, GeoTypesFactory, Validator, identify_geo_type
+from geosy.geotype_handlers import GeometryTypeConverter, is_geometry_valid
+from geosy.geotype_handlers import identify_geo_type, create_geo_json, create_wkt
 from geosy.geotypes import Wkt, GeoJson, GeoJsonPolygon, WktPolygon
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
 
@@ -13,15 +16,7 @@ from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, Uns
 class TestIdentifyGeoType(TestCase):
 
     def test_should_identify_shapely_geo_type(self):
-        shapely_polygon = Polygon([
-            [-50.1715041, -21.7928566],
-            [-50.1744239, -21.7924781],
-            [-50.1773223, -21.7929562],
-            [-50.1784601, -21.7950084],
-            [-50.1723414, -21.7959647],
-            [-50.1715041, -21.7928566]
-        ])
-        geotype = identify_geo_type(shapely_polygon)
+        geotype = identify_geo_type(shapely_dataset.POLYGON)
         self.assertEqual(GeoFormats.SHAPELY, geotype)
 
     def test_should_identify_wkt_geo_type(self):
@@ -42,98 +37,75 @@ class TestGeometryTypeConverter(TestCase):
         factory_mock.create_wkt.return_value = WktPolygon(wkt_dataset.POLYGON)
 
         shapely_polygon = shapely_dataset.POLYGON
-        converter = GeometryTypeConverter(factory_mock)
+        converter = GeometryTypeConverter()
         wkt_polygon = converter.from_shapely_to_wkt(shapely_polygon)
         self.assertIsInstance(wkt_polygon, Wkt)
-        self.assertEqual(
-            wkt_dataset.POLYGON,
-            wkt_polygon.as_str
-        )
+        self.assertEqual(wkt_dataset.POLYGON, wkt_polygon.as_str)
 
     def test_should_convert_wkt_polygon_to_shapely_polygon(self):
         wkt_polygon = WktPolygon(wkt_dataset.POLYGON)
-        converter = GeometryTypeConverter(mock.MagicMock())
+        converter = GeometryTypeConverter()
         shapely_polygon = converter.from_wkt_to_shapely(wkt_polygon)
         self.assertIsInstance(shapely_polygon, Polygon)
-        self.assertEqual(
-            wkt_dataset.POLYGON,
-            shapely_polygon.wkt
-        )
+        self.assertEqual(wkt_dataset.POLYGON, shapely_polygon.wkt)
 
     def test_should_convert_polygon_geometry_from_wkt_to_geojson_polygon(self):
-        factory_mock = mock.MagicMock()
-        factory_mock.create_geo_json.return_value = GeoJsonPolygon({'type': 'Polygon', 'coordinates': [[[-50.1715041, -21.7928566], [-50.1744239, -21.7924781], [-50.1773223, -21.7929562], [-50.1784601, -21.7950084], [-50.1723414, -21.7959647], [-50.1715041, -21.7928566]]]},)
-
         wkt_polygon = Wkt(wkt_dataset.POLYGON)
-        converter = GeometryTypeConverter(factory_mock)
+        converter = GeometryTypeConverter()
         geojson = converter.from_wkt_to_geojson(wkt_polygon)
         self.assertIsInstance(geojson, GeoJson)
         self.assertEqual({'type': 'Polygon', 'coordinates': [[[-50.1715041, -21.7928566], [-50.1744239, -21.7924781], [-50.1773223, -21.7929562], [-50.1784601, -21.7950084], [-50.1723414, -21.7959647], [-50.1715041, -21.7928566]]]}, geojson.as_dict)
 
     def test_should_convert_from_unknown_to_spec_type(self):
         wkt_polygon = WktPolygon(wkt_dataset.POLYGON)
-        converter = GeometryTypeConverter(mock.MagicMock())
+        converter = GeometryTypeConverter()
         shapely_polygon = converter.from_unknown_to_spec_type(wkt_polygon, spec_type=GeoFormats.SHAPELY)
         self.assertIsInstance(shapely_polygon, Polygon)
-        self.assertEqual(
-            wkt_dataset.POLYGON,
-            shapely_polygon.wkt
-        )
+        self.assertEqual(wkt_dataset.POLYGON, shapely_polygon.wkt)
 
     def test_convert_from_unknown_to_spec_type_should_raise_exception_when_unknown_type_is_not_valid(self):
         unknown_type = mock.MagicMock()
+        converter = GeometryTypeConverter()
 
         with self.assertRaises(UnsupportedGeoTypeError):
-            converter = GeometryTypeConverter(mock.MagicMock())
             converter.from_unknown_to_spec_type(unknown_type, spec_type=GeoFormats.SHAPELY)
 
-    def test_convert_from_unknown_to_spec_type_should_raise_exception_when_spec_type_is_not_valid(self):
-        wkt_polygon = WktPolygon(wkt_dataset.POLYGON)
 
-        with self.assertRaises(UnsupportedGeoTypeError):
-            converter = GeometryTypeConverter(mock.MagicMock())
-            converter.from_unknown_to_spec_type(wkt_polygon, spec_type='unsupported')
-
-
-class TestGeoTypesFactory(TestCase):
+class TestCreateWkt(TestCase):
 
     def test_should_create_wkt_polygon(self):
-        factory = GeoTypesFactory()
-        polygon_wkt = factory.create_wkt(wkt_dataset.POLYGON)
+        polygon_wkt = create_wkt(wkt_dataset.POLYGON)
         self.assertIsInstance(polygon_wkt, WktPolygon)
         self.assertEqual(wkt_dataset.POLYGON, polygon_wkt.as_str)
 
     def test_should_raise_UnsupportedShapeError_when_shape_is_not_supported(self):
-        factory = GeoTypesFactory()
         with self.assertRaises(UnsupportedShapeError):
-            factory.create_wkt(wkt_dataset.POINT)
+            create_wkt(wkt_dataset.POINT)
+
+
+class TestCreateGeoJsonFactory(TestCase):
 
     def test_should_create_geojson_polygon(self):
-        factory = GeoTypesFactory()
-        geojso_polygon = factory.create_geo_json(geojson_dataset.POLYGON)
+        geojso_polygon = create_geo_json(geojson_dataset.POLYGON)
         self.assertIsInstance(geojso_polygon, GeoJsonPolygon)
         self.assertEqual(geojson_dataset.POLYGON, geojso_polygon.as_dict)
 
     def test_should_raise_UnsupportedShapeError_when_geojson_is_not_supported(self):
-        factory = GeoTypesFactory()
         with self.assertRaises(UnsupportedShapeError):
-            factory.create_geo_json(geojson_dataset.POINT)
+            create_geo_json(geojson_dataset.POINT)
 
 
-class TestValidator(TestCase):
+class TestIsGeometryValid(TestCase):
 
     def test_is_geometry_valid_should_return_if_polygon_wkt_geometry_is_valid(self):
         wkt_polygon = WktPolygon(wkt_dataset.POLYGON)
-        validator = Validator()
-        self.assertTrue(validator.is_geometry_valid(wkt_polygon))
+        self.assertTrue(is_geometry_valid(wkt_polygon))
 
     def test_is_geometry_valid_should_return_if_geojson_polygon_geometry_is_valid(self):
         geojson_polygon = GeoJsonPolygon(geojson_dataset.POLYGON)
-        validator = Validator()
-        self.assertTrue(validator.is_geometry_valid(geojson_polygon))
+        self.assertTrue(is_geometry_valid(geojson_polygon))
 
     def test_is_geometry_valid_should_raise_UnsupportedTypeError_when_the_geo_type_is_not_supported(self):
         not_supported_type = mock.MagicMock()
-        validator = Validator()
         with self.assertRaises(UnsupportedError):
-            validator.is_geometry_valid(not_supported_type)
+            is_geometry_valid(not_supported_type)

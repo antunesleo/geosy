@@ -5,7 +5,7 @@ from shapely import ops, geometry as shapely_geometry
 from geosy.enums import GeoFormats
 from geosy.custom_typing import AnyPolygonType
 from geosy.exceptions import SeparatedPolygonsError
-from geosy.geotype_handlers import Validator, GeometryTypeConverter, identify_geo_type
+from geosy.geotype_handlers import GeometryTypeConverter, identify_geo_type
 
 
 class Facade:
@@ -14,8 +14,7 @@ class Facade:
 
 class PolygonFacade(Facade):
 
-    def __init__(self, validator: Validator, converter: GeometryTypeConverter):
-        self.__validator = validator
+    def __init__(self, converter: GeometryTypeConverter):
         self.__converter = converter
 
     def merge_polygons(self, polygons: Tuple):

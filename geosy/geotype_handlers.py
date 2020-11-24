@@ -7,6 +7,15 @@ from geosy.custom_typing import AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, An
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
 from geosy.geotypes import Wkt, GeoJsonPolygon, WktPolygon
 
+__all__ = [
+    'ALL_SHAPELY_TYPES',
+    'ALL_WKT_TYPES',
+    'identify_geo_type',
+    'is_geometry_valid',
+    'create_geo_json',
+    'create_wkt',
+    'geometry_type_converter'
+]
 
 ALL_SHAPELY_TYPES = (
     shapely_geometry.Polygon
@@ -37,33 +46,27 @@ def is_geometry_valid(geometry: AnyGeoType) -> bool:
     raise UnsupportedError(f'cant validate because type {type(geometry)} is not supported')
 
 
-class GeoTypesFactory:
+def create_geo_json(geo_json: dict) -> AnyGeoJsonGeoType:
+    shape = geo_json['type'].lower()
 
-    @staticmethod
-    def create_wkt(wkt: str) -> AnyWktGeoType:
-        shape = wkt.split(' ')[0].lower()
+    if geo_json['type'].lower() == GeoShapes.POLYGON.value.lower():
+        return GeoJsonPolygon(geo_json)
 
-        if shape == GeoShapes.POLYGON.value.lower():
-            return WktPolygon(wkt)
+    error_message = f'could not create an geo json instance because the shape {shape} is not supported'
+    raise UnsupportedShapeError(error_message)
 
-        error_message = f'could not create an wkt instance because the shape {shape} is not supported'
-        raise UnsupportedShapeError(error_message)
 
-    @staticmethod
-    def create_geo_json(geo_json: dict) -> AnyGeoJsonGeoType:
-        shape = geo_json['type'].lower()
+def create_wkt(wkt: str) -> AnyWktGeoType:
+    shape = wkt.split(' ')[0].lower()
 
-        if geo_json['type'].lower() == GeoShapes.POLYGON.value.lower():
-            return GeoJsonPolygon(geo_json)
+    if shape == GeoShapes.POLYGON.value.lower():
+        return WktPolygon(wkt)
 
-        error_message = f'could not create an geo json instance because the shape {shape} is not supported'
-        raise UnsupportedShapeError(error_message)
+    error_message = f'could not create an wkt instance because the shape {shape} is not supported'
+    raise UnsupportedShapeError(error_message)
 
 
 class GeometryTypeConverter:
-
-    def __init__(self, geo_types_factory: GeoTypesFactory):
-        self.__factory = geo_types_factory
 
     def from_unknown_to_spec_type(self, unknown_geometry: AnyGeoType, spec_type: GeoFormats):
         known_geometry_type = identify_geo_type(unknown_geometry)
@@ -72,7 +75,7 @@ class GeometryTypeConverter:
         return method_to_call(unknown_geometry)
 
     def from_shapely_to_wkt(self, shapely_geometry: AnyShapelyGeoType) -> AnyWktGeoType:
-        return self.__factory.create_wkt(shapely_geometry.wkt)
+        return create_wkt(shapely_geometry.wkt)
 
     @staticmethod
     def from_wkt_to_shapely(wkt_geometry: Wkt) -> AnyShapelyGeoType:
@@ -80,7 +83,7 @@ class GeometryTypeConverter:
 
     def from_wkt_to_geojson(self, wkt_geometry: Wkt) -> AnyGeoJsonGeoType:
         geojson = geomet_wkt.loads(wkt_geometry.as_str)
-        return self.__factory.create_geo_json(self.__fix_to_right_hand_rule(geojson))
+        return create_geo_json(self.__fix_to_right_hand_rule(geojson))
 
     @staticmethod
     def __fix_to_right_hand_rule(geojson: dict) -> dict:
@@ -92,16 +95,4 @@ class GeometryTypeConverter:
         return rewind(geojson)
 
 
-class Validator:
-
-    @staticmethod
-    def is_geometry_valid(geometry: AnyGeoType) -> bool:
-        if isinstance(geometry, AnyWktGeoType):
-            return geometry.is_valid
-        if isinstance(geometry, AnyGeoJsonGeoType):
-            return geometry.is_valid
-
-        raise UnsupportedError(f'cant validate because type {type(geometry)} is not supported')
-
-
-geometry_type_converter = GeometryTypeConverter(GeoTypesFactory())
+geometry_type_converter = GeometryTypeConverter()
