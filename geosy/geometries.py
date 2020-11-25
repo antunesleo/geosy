@@ -3,7 +3,6 @@ from typing import Union
 from enum import Enum
 
 import geojson as geojson_lib
-
 from shapely import geometry as shapely_geometry
 from shapely import wkt
 from shapely.errors import WKTReadingError
@@ -15,14 +14,20 @@ __all__ = [
     'GeoShapes',
     'GeoJson',
     'Wkt',
+    'GeoJsonPolygon',
+    'WktPolygon',
     'create_wkt',
     'create_geo_json',
+    'create_geometry',
+    'return_geometry',
     'AnyGeoType',
     'AnyWktGeoType',
     'AnyShapelyGeoType',
     'AnyGeoJsonGeoType',
+    'AnyReturnablePolygon',
     'ALL_WKT_TYPES',
-    'ALL_SHAPELY_TYPES'
+    'ALL_SHAPELY_TYPES',
+    'ALL_GEOJSON_TYPES'
 ]
 
 

@@ -4,7 +4,6 @@ from tests.datasets import wkt_str_dataset
 
 from geosy.facades import PolygonFacade
 from geosy.tools import GeometryTypeConverter
-from geosy.geometries import WktPolygon
 
 
 class TestPolygonFacade(TestCase):

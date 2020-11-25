@@ -1,6 +1,5 @@
-from shapely import wkt, geometry as shapely_geometry
+from shapely import wkt
 from geomet import wkt as geomet_wkt
-from geomet import tool
 from geojson_rewind import rewind
 
 
@@ -13,6 +12,8 @@ from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedError
 __all__ = [
     'identify_geometry_type',
     'is_geometry_valid',
+    'create_geo_json',
+    'create_wkt',
     'GeometryTypeConverter',
     'geometry_type_converter'
 ]
@@ -45,6 +46,10 @@ class GeometryTypeConverter:
 
     def from_unknown_to_spec_type(self, unknown_geometry: AnyGeoType, spec_type: GeoFormats):
         known_geometry_type = identify_geometry_type(unknown_geometry)
+
+        if known_geometry_type == spec_type:
+            return unknown_geometry
+
         method_name = f'from_{known_geometry_type.value}_to_{spec_type.value}'
         method_to_call = getattr(self, method_name)
         return method_to_call(unknown_geometry)

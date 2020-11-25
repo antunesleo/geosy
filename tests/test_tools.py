@@ -70,6 +70,11 @@ class TestGeometryTypeConverter(TestCase):
         with self.assertRaises(UnsupportedGeoTypeError):
             converter.from_unknown_to_spec_type(unknown_type, spec_type=GeoFormats.SHAPELY)
 
+    def test_convert_from_unknown_to_spec_type_should_return_unkown_when_is_equal_to_spec(self):
+        converter = GeometryTypeConverter()
+        geometry = converter.from_unknown_to_spec_type(shapely_dataset.POLYGON, GeoFormats.SHAPELY)
+        self.assertEqual(geometry, shapely_dataset.POLYGON)
+
     def test_should_convert_polygon_from_shapely_to_geojson(self):
         converter = GeometryTypeConverter()
         geojson_polygon = converter.from_shapely_to_geojson(shapely_dataset.POLYGON)

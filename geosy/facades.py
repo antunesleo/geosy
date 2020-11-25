@@ -7,7 +7,8 @@ from geosy.exceptions import SeparatedPolygonsError
 from geosy.tools import GeometryTypeConverter, identify_geometry_type, geometry_type_converter
 
 __all__ = [
-    'polygon_facade'
+    'polygon_facade',
+    'PolygonFacade'
 ]
 
 
