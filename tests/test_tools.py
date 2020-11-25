@@ -8,7 +8,7 @@ from tests.datasets import geojson_dict_dataset as geojson_dataset
 
 from geosy.geometries import GeoFormats
 from geosy.tools import GeometryTypeConverter, is_geometry_valid
-from geosy.tools import identify_geo_type, create_geo_json, create_wkt
+from geosy.tools import identify_geometry_type, create_geo_json, create_wkt
 from geosy.geometries import Wkt, GeoJson, GeoJsonPolygon, WktPolygon
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
 
@@ -16,18 +16,18 @@ from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, Uns
 class TestIdentifyGeoType(TestCase):
 
     def test_should_identify_shapely_geo_type(self):
-        geotype = identify_geo_type(shapely_dataset.POLYGON)
+        geotype = identify_geometry_type(shapely_dataset.POLYGON)
         self.assertEqual(GeoFormats.SHAPELY, geotype)
 
     def test_should_identify_wkt_geo_type(self):
         wkt_polygon = WktPolygon(wkt_dataset.POLYGON)
-        geotype = identify_geo_type(wkt_polygon)
+        geotype = identify_geometry_type(wkt_polygon)
         self.assertEqual(GeoFormats.WKT, geotype)
 
     def test_should_raise_unsupported_geotype(self):
         unsupported_type = mock.MagicMock()
         with self.assertRaises(UnsupportedGeoTypeError):
-            identify_geo_type(unsupported_type)
+            identify_geometry_type(unsupported_type)
 
 
 class TestGeometryTypeConverter(TestCase):

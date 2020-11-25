@@ -9,14 +9,14 @@ from geosy.geometries import ALL_SHAPELY_TYPES, ALL_WKT_TYPES
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedError
 
 __all__ = [
-    'identify_geo_type',
+    'identify_geometry_type',
     'is_geometry_valid',
     'GeometryTypeConverter',
     'geometry_type_converter'
 ]
 
 
-def identify_geo_type(unknown_geo_type: AnyGeoType) -> GeoFormats:
+def identify_geometry_type(unknown_geo_type: AnyGeoType) -> GeoFormats:
     if isinstance(unknown_geo_type, ALL_SHAPELY_TYPES):
         return GeoFormats.SHAPELY
 
@@ -39,7 +39,7 @@ def is_geometry_valid(geometry: AnyGeoType) -> bool:
 class GeometryTypeConverter:
 
     def from_unknown_to_spec_type(self, unknown_geometry: AnyGeoType, spec_type: GeoFormats):
-        known_geometry_type = identify_geo_type(unknown_geometry)
+        known_geometry_type = identify_geometry_type(unknown_geometry)
         method_name = f'from_{known_geometry_type.value}_to_{spec_type.value}'
         method_to_call = getattr(self, method_name)
         return method_to_call(unknown_geometry)
