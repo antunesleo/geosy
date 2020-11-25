@@ -70,6 +70,18 @@ class TestGeometryTypeConverter(TestCase):
         with self.assertRaises(UnsupportedGeoTypeError):
             converter.from_unknown_to_spec_type(unknown_type, spec_type=GeoFormats.SHAPELY)
 
+    def test_should_convert_polygon_from_shapely_to_geojson(self):
+        converter = GeometryTypeConverter()
+        geojson_polygon = converter.from_shapely_to_geojson(shapely_dataset.POLYGON)
+        self.assertIsInstance(geojson_polygon, GeoJsonPolygon)
+        self.assertEqual(geojson_polygon.as_dict, geojson_dataset.POLYGON)
+
+    def test_should_convert_polygon_from_geojson_to_shapely(self):
+        converter = GeometryTypeConverter()
+        shapely_polygon = converter.from_geojson_to_shapely(create_geo_json(geojson_dataset.POLYGON))
+        self.assertIsInstance(shapely_polygon, Polygon)
+        self.assertEqual(shapely_polygon.wkt, shapely_dataset.POLYGON.wkt)
+
 
 class TestIsGeometryValid(TestCase):
 
@@ -85,7 +97,6 @@ class TestIsGeometryValid(TestCase):
         not_supported_type = mock.MagicMock()
         with self.assertRaises(UnsupportedError):
             is_geometry_valid(not_supported_type)
-
 
 
 class TestCreateWkt(TestCase):

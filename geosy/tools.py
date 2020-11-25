@@ -1,8 +1,10 @@
 from shapely import wkt, geometry as shapely_geometry
 from geomet import wkt as geomet_wkt
+from geomet import tool
 from geojson_rewind import rewind
 
-from geosy.geometries import GeoFormats
+
+from geosy.geometries import GeoFormats, ALL_GEOJSON_TYPES
 from geosy.geometries import Wkt, AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, AnyGeoJsonGeoType
 from geosy.geometries import create_wkt, create_geo_json
 from geosy.geometries import ALL_SHAPELY_TYPES, ALL_WKT_TYPES
@@ -22,6 +24,9 @@ def identify_geometry_type(unknown_geo_type: AnyGeoType) -> GeoFormats:
 
     if isinstance(unknown_geo_type, ALL_WKT_TYPES):
         return GeoFormats.WKT
+
+    if isinstance(unknown_geo_type, ALL_GEOJSON_TYPES):
+        return GeoFormats.GEOJSON
 
     raise UnsupportedGeoTypeError(f'The type {unknown_geo_type} is not supported')
 
@@ -44,8 +49,18 @@ class GeometryTypeConverter:
         method_to_call = getattr(self, method_name)
         return method_to_call(unknown_geometry)
 
-    def from_shapely_to_wkt(self, shapely_geometry: AnyShapelyGeoType) -> AnyWktGeoType:
+    @staticmethod
+    def from_shapely_to_wkt(shapely_geometry: AnyShapelyGeoType) -> AnyWktGeoType:
         return create_wkt(shapely_geometry.wkt)
+
+    @staticmethod
+    def from_shapely_to_geojson(shapely_geometry: AnyShapelyGeoType) -> AnyGeoJsonGeoType:
+        return create_geo_json(geomet_wkt.loads(shapely_geometry.wkt))
+
+    @staticmethod
+    def from_geojson_to_shapely(geojson_geometry: AnyGeoJsonGeoType) -> AnyShapelyGeoType:
+        wkt_str_geometry = geomet_wkt.dumps(geojson_geometry.as_dict)
+        return wkt.loads(wkt_str_geometry)
 
     @staticmethod
     def from_wkt_to_shapely(wkt_geometry: Wkt) -> AnyShapelyGeoType:
