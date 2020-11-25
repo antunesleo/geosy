@@ -4,8 +4,6 @@ from geosy.facades import polygon_facade
 
 __all__ = ['merge_polygons']
 
-ALL_INTERNAL_GEOMETRIES = []
-
 
 def merge_polygons(polygons: tuple) -> AnyReturnablePolygon:
     merged_polygon = polygon_facade.merge_polygons(polygons)

@@ -1,4 +1,7 @@
-from shapely import wkt
+from typing import Tuple
+
+from shapely import wkt, ops
+from shapely import geometry as shapely_geometry
 from geomet import wkt as geomet_wkt
 from geojson_rewind import rewind
 
@@ -7,7 +10,7 @@ from geosy.geometries import GeoFormats, ALL_GEOJSON_TYPES
 from geosy.geometries import Wkt, AnyShapelyGeoType, AnyGeoType, AnyWktGeoType, AnyGeoJsonGeoType
 from geosy.geometries import create_wkt, create_geo_json
 from geosy.geometries import ALL_SHAPELY_TYPES, ALL_WKT_TYPES
-from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedError
+from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedError, SeparatedPolygonsError
 
 __all__ = [
     'identify_geometry_type',
@@ -15,7 +18,9 @@ __all__ = [
     'create_geo_json',
     'create_wkt',
     'GeometryTypeConverter',
-    'geometry_type_converter'
+    'GeoFunctions',
+    'geometry_type_converter',
+    'geo_functions'
 ]
 
 
@@ -85,4 +90,16 @@ class GeometryTypeConverter:
         return rewind(geojson)
 
 
+class GeoFunctions:
+
+    @staticmethod
+    def merge_polygons(polygons: Tuple[shapely_geometry.Polygon]) -> shapely_geometry.Polygon:
+        merged_polygon = ops.cascaded_union(polygons)
+        if not isinstance(merged_polygon, shapely_geometry.Polygon):
+            raise SeparatedPolygonsError('Could not merge polygons because they are not touching')
+
+        return merged_polygon
+
+
 geometry_type_converter = GeometryTypeConverter()
+geo_functions = GeoFunctions()

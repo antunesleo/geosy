@@ -1,15 +1,12 @@
 from typing import Tuple
 
-from shapely import ops, geometry as shapely_geometry
-
-from geosy.geofunctions import merge_polygons
 from geosy.geometries import GeoFormats, create_geometry, return_geometry, AnyReturnablePolygon
-from geosy.exceptions import SeparatedPolygonsError
-from geosy.tools import GeometryTypeConverter, identify_geometry_type, geometry_type_converter
+from geosy.tools import GeometryTypeConverter, GeoFunctions
+from geosy.tools import geo_functions, identify_geometry_type, geometry_type_converter
+
 
 __all__ = [
-    'polygon_facade',
-    'PolygonFacade'
+    'polygon_facade'
 ]
 
 
@@ -19,8 +16,9 @@ class Facade:
 
 class PolygonFacade(Facade):
 
-    def __init__(self, converter: GeometryTypeConverter):
+    def __init__(self, converter: GeometryTypeConverter, geo_functions: GeoFunctions):
         self.__converter = converter
+        self.__geo_functions = geo_functions
 
     def merge_polygons(self, polygons_data: Tuple) -> AnyReturnablePolygon:
         if len(polygons_data) < 2:
@@ -29,7 +27,7 @@ class PolygonFacade(Facade):
         polygons = tuple(create_geometry(polygon) for polygon in polygons_data)
         shapely_polygons = self.__convert_polygons_to_shapely(polygons)
 
-        shapely_merged_polygon = merge_polygons(shapely_polygons)
+        shapely_merged_polygon = self.__geo_functions.merge_polygons(shapely_polygons)
 
         geometry_type = identify_geometry_type(polygons[0])
         merged_polygon = self.__converter.from_unknown_to_spec_type(shapely_merged_polygon, spec_type=geometry_type)
@@ -46,4 +44,4 @@ class PolygonFacade(Facade):
         return tuple(shapely_polygons)
 
 
-polygon_facade = PolygonFacade(geometry_type_converter)
+polygon_facade = PolygonFacade(geometry_type_converter, geo_functions)

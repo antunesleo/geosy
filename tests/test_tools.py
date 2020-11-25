@@ -7,7 +7,7 @@ from tests.datasets import shapely_dataset as shapely_dataset
 from tests.datasets import geojson_dict_dataset as geojson_dataset
 
 from geosy.geometries import GeoFormats
-from geosy.tools import GeometryTypeConverter, is_geometry_valid
+from geosy.tools import GeometryTypeConverter, is_geometry_valid, GeoFunctions
 from geosy.tools import identify_geometry_type, create_geo_json, create_wkt
 from geosy.geometries import Wkt, GeoJson, GeoJsonPolygon, WktPolygon
 from geosy.exceptions import UnsupportedGeoTypeError, UnsupportedShapeError, UnsupportedError
@@ -86,6 +86,14 @@ class TestGeometryTypeConverter(TestCase):
         shapely_polygon = converter.from_geojson_to_shapely(create_geo_json(geojson_dataset.POLYGON))
         self.assertIsInstance(shapely_polygon, Polygon)
         self.assertEqual(shapely_polygon.wkt, shapely_dataset.POLYGON.wkt)
+
+
+class TestGeoFunctions(TestCase):
+
+    def test_should_merge_polygons(self):
+        polygons = (shapely_dataset.MERGEABLE_POLYGON_1, shapely_dataset.MERGEABLE_POLYGON_2)
+        merged_polygon = GeoFunctions.merge_polygons(polygons)
+        self.assertEqual(merged_polygon.wkt, shapely_dataset.MERGED_POLYGON.wkt)
 
 
 class TestIsGeometryValid(TestCase):
