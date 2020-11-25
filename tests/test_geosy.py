@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from shapely.geometry import Polygon
 
+from geosy.exceptions import CorruptedGeometryError
 from geosy.geometries import create_geo_json
 from tests.datasets import wkt_str_dataset
 from tests.datasets import geojson_dict_dataset, shapely_dataset
@@ -32,3 +33,10 @@ class TestMergePolygons(TestCase):
         ))
         self.assertIsInstance(merged_shapely_polygon, Polygon)
         self.assertEqual(merged_shapely_polygon.wkt, shapely_dataset.MERGED_POLYGON.wkt)
+
+    def test_merge_shapely_polygons_should_raise_CorruptedGeometryError_when_polygon_is_corrupted(self):
+        with self.assertRaises(CorruptedGeometryError):
+            merge_polygons((
+                wkt_str_dataset.POLYGON_CORRUPTED_BY_COMMA_BETWEEN_COORDINATES,
+                wkt_str_dataset.POLYGON_CORRUPTED_BY_COMMA_BETWEEN_COORDINATES
+            ))
